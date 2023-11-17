@@ -25,6 +25,7 @@ import {
   LearnMoreLinks,
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
+import Carousel from './component/Corousel';
 
 type SectionProps = PropsWithChildren<{
   title: string;
@@ -64,9 +65,9 @@ function App(): JSX.Element {
   };
 
   return (
-    <SafeAreaView style={{display:"flex"}}>
-     
-    <CarouselCards/>
+    <SafeAreaView >
+     <Carousel/>
+    {/* <CarouselCards/> */}
     </SafeAreaView>
   );
 }
