@@ -68,6 +68,12 @@ const Carousel = () => {
       useNativeDriver: true,
     }).start();
   }, [currentIndex]);
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      setCurrentIndex(prevIndex => (prevIndex + 1) % data.length);
+    }, 4000);
+    return () => clearInterval(intervalId);
+  }, []);
 
   const renderDots = () => {
     return data.map((item, index) => (
