@@ -13,6 +13,7 @@ import data from './data';
 
 const Carousel = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [showTitle, setShowTitle] = useState(true);
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const dotsFadeAnim = useRef(new Animated.Value(1)).current;
   const pan = useRef(new Animated.ValueXY()).current;
@@ -31,18 +32,20 @@ const Carousel = () => {
         setCurrentIndex(currentIndex + 1);
       }
 
+      Animated.spring(pan, {
+        toValue: {x: 0, y: 0},
+        useNativeDriver: false,
+      }).start();
+      setShowTitle(false);
       setTimeout(() => {
-        // Reset pan position
         Animated.spring(pan, {
           toValue: {x: 0, y: 0},
           useNativeDriver: false,
         }).start();
-      }, 1000);
-      // Reset pan position
-      //   Animated.spring(pan, {
-      //     toValue: {x: 0, y: 0},
-      //     useNativeDriver: false,
-      //   }).start();
+      }, 100);
+      setTimeout(() => {
+        setShowTitle(true);
+      }, 400);
     },
   });
 
@@ -119,25 +122,29 @@ const Carousel = () => {
               opacity: dotsFadeAnim,
             },
           ]}>
-          <Animated.Text
-            style={[
-              styles.description,
-              {
-                opacity: pan.x <= 50 ? 0 : 1,
-                transform: [{translateX: pan.x}],
-              },
-            ]}>
-            {data[currentIndex].body}{' '}
-          </Animated.Text>
-          <Animated.Text
-            style={[
-              styles.title,
-              {
-                transform: [{translateX: pan.x}],
-              },
-            ]}>
-            {data[currentIndex].title}
-          </Animated.Text>
+          {showTitle && (
+            <Animated.Text
+              style={[
+                styles.description,
+                {
+                  opacity: pan.x <= 50 ? 0 : 1,
+                  transform: [{translateX: pan.x}],
+                },
+              ]}>
+              {data[currentIndex].body}{' '}
+            </Animated.Text>
+          )}
+          {showTitle && (
+            <Animated.Text
+              style={[
+                styles.title,
+                {
+                  transform: [{translateX: pan.x}],
+                },
+              ]}>
+              {data[currentIndex].title}
+            </Animated.Text>
+          )}
 
           {/* <Text style={styles.description}></Text> */}
         </Animated.View>
