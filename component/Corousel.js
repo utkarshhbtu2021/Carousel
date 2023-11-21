@@ -24,28 +24,54 @@ const Carousel = () => {
       Math.abs(gestureState.dx) > Math.abs(gestureState.dy),
     onPanResponderMove: (e, gestureState) => {
       pan.x.setValue(gestureState.dx);
+      console.log(gestureState.dx, 'utkarsh');
+      if (gestureState.dx > 5 && gestureState.dx < 100) {
+        fadeOut(dotsFadeAnim, 0.4);
+      }
+      if (gestureState.dx > 100 && gestureState.dx < 200) {
+        fadeOut(dotsFadeAnim, 0.2);
+      }
+      if (gestureState.dx > 200 && gestureState.dx < 300) {
+        fadeOut(dotsFadeAnim, 0);
+      }
+      if (gestureState.dx < -5 && gestureState.dx > -100) {
+        fadeOut(dotsFadeAnim, 0.4);
+      }
+      if (gestureState.dx < -100 && gestureState.dx > -200) {
+        fadeOut(dotsFadeAnim, 0.2);
+      }
+      if (gestureState.dx < -200 && gestureState.dx > -300) {
+        fadeOut(dotsFadeAnim, 0);
+      }
     },
     onPanResponderRelease: (e, gestureState) => {
+      console.log(gestureState, 'gestureState');
       if (gestureState.dx > 50 && currentIndex > 0) {
         setCurrentIndex(currentIndex - 1);
+        fadeIn(dotsFadeAnim);
       } else if (gestureState.dx < -50 && currentIndex < data.length - 1) {
         setCurrentIndex(currentIndex + 1);
+        fadeIn(dotsFadeAnim);
+      } else if (currentIndex <= 0 || currentIndex >= data.length - 1) {
+        fadeIn(dotsFadeAnim);
       }
 
       Animated.spring(pan, {
         toValue: {x: 0, y: 0},
         useNativeDriver: false,
       }).start();
-      setShowTitle(false);
-      setTimeout(() => {
-        Animated.spring(pan, {
-          toValue: {x: 0, y: 0},
-          useNativeDriver: false,
-        }).start();
-      }, 100);
-      setTimeout(() => {
-        setShowTitle(true);
-      }, 400);
+      if (gestureState.dx !== 0) {
+        setShowTitle(false);
+        setTimeout(() => {
+          Animated.spring(pan, {
+            toValue: {x: 0, y: 0},
+            useNativeDriver: false,
+          }).start();
+        }, 100);
+        setTimeout(() => {
+          setShowTitle(true);
+        }, 400);
+      }
     },
   });
 
@@ -57,20 +83,19 @@ const Carousel = () => {
     }).start();
   };
 
-  const fadeOut = anim => {
+  const fadeOut = (anim, value) => {
     Animated.timing(anim, {
-      toValue: 0.2,
-      duration: 500,
+      toValue: value,
+      duration: 50,
       useNativeDriver: false,
     }).start();
   };
 
   const handleSnapToItem = () => {
-    fadeOut(dotsFadeAnim);
-
-    setTimeout(() => {
-      fadeIn(dotsFadeAnim);
-    }, 500);
+    // fadeOut(dotsFadeAnim);
+    // setTimeout(() => {
+    //   fadeIn(dotsFadeAnim);
+    // }, 500);
   };
 
   useEffect(() => {
@@ -82,10 +107,10 @@ const Carousel = () => {
   }, [currentIndex]);
 
   useEffect(() => {
-    const intervalId = setInterval(() => {
-      setCurrentIndex(prevIndex => (prevIndex + 1) % data.length);
-    }, 5000);
-    return () => clearInterval(intervalId);
+    // const intervalId = setInterval(() => {
+    //   setCurrentIndex(prevIndex => (prevIndex + 1) % data.length);
+    // }, 5000);
+    // return () => clearInterval(intervalId);
   }, []);
 
   const renderDots = () => {
@@ -108,9 +133,10 @@ const Carousel = () => {
       <View
         style={styles.container}
         {...panResponder.panHandlers}
-        onTouchStart={() => {
-          handleSnapToItem();
-        }}>
+        // onTouchStart={() => {
+        //   handleSnapToItem();
+        // }}
+      >
         <Animated.Image
           source={{uri: data[currentIndex].imgUrl}}
           style={[styles.backgroundImage, {opacity: fadeAnim}]}
